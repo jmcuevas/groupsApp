@@ -1,0 +1,55 @@
+<!-- Is the user the creator of the group? -->
+<% if logged_in_user == @group.user%>
+    <% group_creator = true %>
+<% else %>
+    <% group_creator = false %>
+<% end %>
+
+<!-- Is the user a member of the group? -->
+<% if @group.user_members.include? logged_in_user %>
+    <% group_member = true %>
+<% else %>
+    <% group_member = false %>
+<% end %>
+<div class="border_std col_2">
+    <h1><%= @group.name %></h1>
+    <!-- Join or leave group depending if the user is a member -->
+    <% if group_member %>
+    <form class="" action="/members" method="post">
+        <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+        <input type="hidden" name="_method" value="delete">
+        <input type="hidden" name="member[group_id]" value="<%= @group.id %>">
+        <input type="hidden" name="member[user_id]" value="<%= logged_in_user.id %>">
+        <input class="button_stop" type="submit" value="Leave Group">
+    </form>
+    <% else %>
+    <form class="" action="/members" method="post">
+        <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+        <input type="hidden" name="member[group_id]" value="<%= @group.id %>">
+        <input type="hidden" name="member[user_id]" value="<%= logged_in_user.id %>">
+        <input class="button_do" type="submit" value="Join Group">
+    </form>
+    <% end %>
+    <!-- If the user is the creator let him destroy the group -->
+    <% if group_creator %>
+    <form class="" action="/groups/<%= @group.id %>" method="post">
+        <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+        <input type="hidden" name="_method" value="delete">
+        <input class="button_stop" type="submit" value="Delete Group">
+    </form>
+    <% end %>
+    <!-- Group description -->
+    <p><%= @group.description %></p>
+    <!-- Creator name -->
+    <% if group_creator %>
+    <h3>Created by: YOU </h3>
+    <% else %>
+    <h3>Created by: <%= @group.user.first_name %> <%= @group.user.last_name %></h3>
+    <% end %>
+    <h3>Members:</h3>
+    <ul>
+        <% @group.user_members.each do |member| %>
+        <li><%= member.first_name %> <%= member.last_name %></li>
+        <% end %>
+    </ul>
+</div>
