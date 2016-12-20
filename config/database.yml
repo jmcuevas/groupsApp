@@ -84,4 +84,4 @@ production:
   <<: *default
   database: groupsApp_production
   # username: groupsApp
-  # password: <%= ENV['GROUPSAPP_DATABASE_PASSWORD'] %>
+  password: <%= ENV['GROUPSAPP_DATABASE_PASSWORD'] %>
